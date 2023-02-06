@@ -34,11 +34,11 @@ async def door_mapping(level: Level) -> dict:
     response = graph.run(
         """
         MATCH (cur_level:Level {number: $level_number}) 
-        OPTIONAL MATCH (cur_level)-[:RED_DOOR]-(red_level)
-        OPTIONAL MATCH (cur_level)-[:GREEN_DOOR]-(green_level)
-        OPTIONAL MATCH (cur_level)-[:BLUE_DOOR]-(blue_level)
+        OPTIONAL MATCH (cur_level)-[:RED_DOOR]-(DoorRed)
+        OPTIONAL MATCH (cur_level)-[:GREEN_DOOR]-(DoorGreen)
+        OPTIONAL MATCH (cur_level)-[:BLUE_DOOR]-(DoorBlue)
         
-        RETURN cur_level, red_level, green_level, blue_level
+        RETURN cur_level, DoorRed, DoorGreen, DoorBlue
     """,
         level_number=level.id,
     ).data()[0]
