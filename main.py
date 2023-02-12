@@ -15,7 +15,11 @@ graph = Graph(neo4j_url, auth=(user, pswd))
 
 app = FastAPI()
 
-origins = ["http://localhost:5500", "http://127.0.0.1:5500"]
+origins = [
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "https://wagenrace.github.io/Platformer/",
+]
 
 app.add_middleware(
     CORSMiddleware,
