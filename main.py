@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from py2neo import Graph
+from fastapi.middleware.cors import CORSMiddleware
 
 neo4j_url = os.environ.get("neo4jUrl")
 user = os.environ.get("user")
@@ -13,6 +14,16 @@ graph = Graph(neo4j_url, auth=(user, pswd))
 
 
 app = FastAPI()
+
+origins = ["http://localhost:5500"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -33,12 +44,12 @@ class Level(BaseModel):
 async def door_mapping(level: Level) -> dict:
     response = graph.run(
         """
-        MATCH (cur_level:Level {number: $level_number}) 
-        OPTIONAL MATCH (cur_level)-[:RED_DOOR]-(DoorRed)
-        OPTIONAL MATCH (cur_level)-[:GREEN_DOOR]-(DoorGreen)
-        OPTIONAL MATCH (cur_level)-[:BLUE_DOOR]-(DoorBlue)
+        MATCH (CurrentLevel:Level {number: $level_number}) 
+        OPTIONAL MATCH (CurrentLevel)-[:RED_DOOR]-(DoorRed)
+        OPTIONAL MATCH (CurrentLevel)-[:GREEN_DOOR]-(DoorGreen)
+        OPTIONAL MATCH (CurrentLevel)-[:BLUE_DOOR]-(DoorBlue)
         
-        RETURN cur_level, DoorRed, DoorGreen, DoorBlue
+        RETURN CurrentLevel, DoorRed, DoorGreen, DoorBlue
     """,
         level_number=level.id,
     ).data()[0]
